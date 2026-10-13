@@ -15,24 +15,36 @@ public class LinkedListStack<T> implements Stack<T> {
     @Override
     public void push(T item) {
         // TODO: Create a node, link it to the old first node, and make it the new first node.
+        Node oldFirst = first;
+        Node newFirst = new Node();
+        newFirst.next = oldFirst;
+        newFirst.item = item;
+        first = newFirst;
+        ++n;
     }
 
     @Override
     public T pop() {
         // TODO: Save the first item's value, move first to first.next, and return the saved value.
-        return null;
+        if (n == 0) return null;
+        --n;
+        Node removed = new Node();
+        removed.item = first.item;
+        removed.next = first.next;
+        first = first.next;
+        return removed.item;
     }
 
     @Override
     public boolean isEmpty() {
         // TODO: Return true when the first node is null.
-        return false;
+        return first == null;
     }
 
     @Override
     public int size() {
         // TODO: Return the number of items currently in the stack.
-        return 0;
+        return n;
     }
 
     /**
@@ -42,7 +54,28 @@ public class LinkedListStack<T> implements Stack<T> {
     public static int evalRPN(String[] tokens) {
         // TODO: Use a LinkedListStack<Integer> to evaluate the tokens. For an operator,
         // pop the right operand first, then the left operand; apply the operator and push the result.
-        return 0;
+        if (tokens.length == 0) return 0;
+        LinkedListStack<Integer> numbers = new LinkedListStack<>();
+        for (String s : tokens) {
+            if (!(s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/"))) {
+                int uh = Integer.parseInt(s);
+                numbers.push(uh);
+            } else {
+                int i = numbers.pop();
+                int j = numbers.pop();
+                int result = operate(i, j, s);
+                numbers.push(result);
+            }
+        }
+        int total = numbers.pop();
+        return total;
+    }
+
+    public static int operate (int i, int j, String operator) {
+        if (operator.equals("+")) return i + j;
+        else if (operator.equals("-")) return j -i;
+        else if (operator.equals("*")) return i * j;
+        else return j / i;
     }
 
     static void check(String label, Object actual, Object expected) {
